@@ -1,0 +1,22 @@
+{
+  "name": "docker_node_hx",
+  "version": "0.0.1",
+  "description": "",
+  "main": "www",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=dev nodemon  --harmony  --inspect www"
+  },
+  "author": "hxkuan",
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "koa": "^2.5.1"
+  },
+  "devDependencies": {
+    "cross-env": "^5.1.6",
+    "nodemon": "^1.17.5"
+  }
+}
