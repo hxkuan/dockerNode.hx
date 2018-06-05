@@ -1,0 +1,36 @@
+FROM ubuntu:16.04
+
+# 设置镜像作者
+MAINTAINER Hxkuan <386200854@qq.com>
+
+# 下载tzdata, wget工具
+RUN apt-get update  && apt-get install -y \
+    tzdata  \
+    wget \
+    npm
+
+# npm版本6.1.0  nodejs版本9.4.0
+RUN npm install npm@6.1.0 -g && \
+    npm install -g n && \
+    n 9.4.0
+
+# 设置时区
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN mkdir /app
+
+# 构建项目，exec进入的目录
+WORKDIR /app
+
+# 拷贝package.json(如此可优化构建)
+COPY package.json /app/package.json
+RUN npm install -d --registry=https://registry.npm.taobao.org
+
+# 拷贝其他代码
+COPY ./src/ /app/src/
+COPY ./www /app/www
+COPY ./.babelrc /app/.babelrc
+
+CMD ["npm", "run", "dev"]
+
