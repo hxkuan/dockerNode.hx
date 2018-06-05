@@ -19,3 +19,6 @@ ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN mkdir /app
+
+# 构建项目，exec进入的目录
+WORKDIR /app
