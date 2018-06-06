@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-
+global._ROOR_=__dirname;
 require("babel-register");
 require("./src/app");
