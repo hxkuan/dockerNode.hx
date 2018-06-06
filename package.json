@@ -5,7 +5,8 @@
   "main": "www",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cross-env NODE_ENV=dev nodemon  --harmony  --inspect www"
+    "debug": "cross-env NODE_ENV=dev nodemon  --harmony  --inspect=0.0.0.0:9229 www",
+    "dev": "cross-env NODE_ENV=dev nodemon  --harmony  www"
   },
   "author": "hxkuan",
   "license": "ISC",

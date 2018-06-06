@@ -21,3 +21,9 @@ docker exec -it <name> /bin/bash
 docker exec -it <name> /bin/bash *.sh
 
 ```
+
+## 注意
+
+### --inspect=0.0.0.0
+
+> 在node的inspect中需要将host设置为0.0.0.0（不能为172.0.0.1）否则DevTools将无法监听到；原因未知。
