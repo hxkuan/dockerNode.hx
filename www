@@ -1,4 +1,3 @@
 #!/usr/bin/env node
-global._ROOR_=__dirname;
-require("babel-register");
+global._ROOT_=__dirname;
 require("./src/app");

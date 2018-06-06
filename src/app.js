@@ -1,13 +1,13 @@
-/**
- * Created by wali on 2018/6/1.
- */
-import Koa from "koa";
-import favicon from "./middleware/favicon"
-import serve from 'koa-static'
-const app = new Koa();
+const Koa = require('koa'),
+  favicon = require('./middleware/favicon'),
+  router = require('./middleware/router'),
+  serve = require('koa-static'),
+  app = new Koa;
 
-app.use(favicon(_ROOR_ + '/favicon.ico'));
-app.use(serve(_ROOR_ + '/public'));
+app.use(favicon(_ROOT_ + '/favicon.ico'));
+app.use(serve(_ROOT_ + '/public'));
+
+app.use(router(_ROOT_ + '/src/controllers'));
 
 // app.use(ctx => {
 //   ctx.body = 'Hello Koa, hxk';
