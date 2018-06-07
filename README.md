@@ -1,3 +1,7 @@
+## 简介
+> 本application基于`Docker version 18.05.0-ce`。
+基于docker的开发，发布环境的koa2的活动系统。
+
 ## 常用命令
 ```shell
 # 构建线上环境
