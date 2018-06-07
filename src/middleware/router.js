@@ -1,34 +1,40 @@
 'use strict';
-const fs =require('fs'),
+const fs = require('fs'),
   KoaRouter = require('koa-router');
 
-function addControllers(router, dir, controllersDir) {
+KoaRouter.prototype.addControllers = function (dir, controllersDir) {
   const files = fs.readdirSync(dir);
   files.forEach(file => {
     const fn = `${dir}/${file}`,
       stat = fs.statSync(fn);
     if (stat.isDirectory()) {
-      return addControllers(router, fn, controllersDir);
+      return this.addControllers(fn, controllersDir);
     }
 
     const handle = require(fn);
     let url = fn.split(controllersDir)[1].split('.')[0];
     url = url.slice(0, 1) === '/' ? url : `/${url}`;
-    router.get(url, handle);
-    router.post(url, handle);
-    if (url === '/index') {
-      router.get(url.split('.')[0], handle);
-      router.post(url.split('.')[0], handle);
+    this.addRequest(url, handle);
+    let indexExt = '/index';
+    if (url.endsWith('/index')) {
+      this.addRequest(url.slice(0, url.length - indexExt.length + 1), handle);
     }
   })
-}
+};
 
-module.exports =  function (dir = './controllers') {
+KoaRouter.prototype.addRequest = function (path, middleware) {
+  this.get(path, middleware);
+  this.post(path, middleware);
+};
+
+module.exports = function (dir = './controllers') {
   if (!dir) {
     throw `dir can not be null in ${__filename}`;
   }
   const router = KoaRouter();
-  addControllers(router, dir, dir);
-  router.get('/', (ctx, next) => require(`${dir}/index`)(ctx, next));
-  return router.routes();
+  router.addControllers(dir, dir);
+  return function (ctx, next) {
+    ctx.params = ctx.req.method === 'GET' ? ctx.query : ctx.request.body;// 同时处理get post请求参数
+    router.routes()(ctx, next);
+  }
 };
