@@ -1,0 +1,37 @@
+FROM ubuntu:16.04
+
+ENV REDIS_VERSION 4.0.9
+
+# 创建一个挂载点， 我是首先创建一个/data文件，然后设置为挂在点， 我这里使用它存放日志， 也可以存放数据库
+VOLUME "/data"
+
+# WORKDIR设置工作目录， 不用使用cd，没用
+WORKDIR /root
+# 创建redis文件夹
+RUN mkdir redis
+# 设置为工作目录
+WORKDIR /root/redis
+
+# 安装工具
+RUN apt-get update  && apt-get install -y \
+    software-properties-common \
+    wget \
+    gcc && \
+    apt-get install --reinstall make
+
+
+
+# 安装redis
+RUN wget http://download.redis.io/releases/redis-$REDIS_VERSION.tar.gz && \
+    tar xvzf redis-$REDIS_VERSION.tar.gz
+WORKDIR ./redis-$REDIS_VERSION
+RUN make && make install
+WORKDIR /root
+RUN rm -rf redis/
+
+# 复制配置文件到容器中， 据说ADD命令比COPY好，默认端口为6379，进入名行命令：redis-cli
+
+# COPY  ./redis.conf /etc/
+# CMD redis-server /etc/redis.conf
+
+CMD redis-server
