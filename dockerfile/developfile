@@ -7,16 +7,50 @@ MAINTAINER Hxkuan <386200854@qq.com>
 RUN apt-get update  && apt-get install -y \
     tzdata  \
     wget \
-    npm
+    npm \
+    software-properties-common \
+    lsof \
+    gcc && \
+    apt-get install --reinstall make
 
+# 设置时区
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# -------- 安装nodejs -------
 # npm版本6.1.0  nodejs版本9.4.0
 RUN npm install npm@6.1.0 -g && \
     npm install -g n && \
     n 9.4.0
 
-# 设置时区
-ENV TZ=Asia/Shanghai
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# -------- 安装mongo -------
+RUN mkdir -p /data/db && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5 && \
+    echo "deb [ arch=amd64,arm64,ppc64el,s390x ] http://repo.mongodb.com/apt/ubuntu xenial/mongodb-enterprise/3.6 multiverse" |  tee /etc/apt/sources.list.d/mongodb-enterprise.list && \
+    apt-get update && \
+    apt-get install -y mongodb-enterprise=3.6.5 mongodb-enterprise-server=3.6.5 mongodb-enterprise-shell=3.6.5 mongodb-enterprise-mongos=3.6.5 mongodb-enterprise-tools=3.6.5
+CMD mongod
+
+# -------- 安装redis -------
+# WORKDIR设置工作目录， 不用使用cd，没用
+WORKDIR /root
+# 创建redis文件夹
+RUN mkdir redis
+# 设置为工作目录
+WORKDIR /root/redis
+
+RUN wget http://download.redis.io/releases/redis-4.0.9.tar.gz && \
+    tar xvzf redis-4.0.9.tar.gz
+WORKDIR ./redis-4.0.9
+RUN make && make install
+WORKDIR /root
+RUN rm -rf redis/
+
+# 复制配置文件到容器中， 据说ADD命令比COPY好，默认端口为6379，进入名行命令：redis-cli
+# COPY  ./redis.conf /etc/
+# CMD redis-server /etc/redis.conf
+CMD redis-server
+
 
 RUN mkdir /app
 
